@@ -1,0 +1,64 @@
+// Create NAT Gateways for Private Subnets
+
+{%- for availability_zone in availability_zones %}
+
+// https://www.terraform.io/docs/providers/aws/r/eip.html
+resource "aws_eip" "{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gw_eip" {
+    vpc = true
+
+    tags = {
+        Name = "${var.vpc_name}_{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gw_eip"
+        VPC = "${var.vpc_name}"
+        Owner = "${var.vpc_owner}"
+    }
+}
+{%- endfor %}
+{%- for availability_zone in availability_zones %}
+
+// https://www.terraform.io/docs/providers/aws/r/nat_gateway.html
+resource "aws_nat_gateway" "{{ public_network_tier }}_tier_{{ availability_zone }}" {
+    allocation_id = "${aws_eip.{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gw_eip.id}"
+    subnet_id = "${aws_subnet.{{ public_network_tier }}_tier_{{ availability_zone }}.id}"
+    depends_on = ["aws_internet_gateway.igw"]
+
+    tags = {
+        Name = "${var.vpc_name}_{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gw_eip"
+        VPC = "${var.vpc_name}"
+        Owner = "${var.vpc_owner}"
+    }
+}
+{%- endfor %}
+{%- for availability_zone in availability_zones %}
+
+// https://www.terraform.io/docs/providers/aws/r/route_table.html
+resource "aws_route_table" "{{ public_network_tier }}_tier_{{ availability_zone }}_nat_rt" {
+    vpc_id = "${aws_vpc.main.id}"
+
+    tags = {
+        Name = "${var.vpc_name}_{{ public_network_tier }}_tier_{{ availability_zone }}_nat_rt"
+        VPC = "${var.vpc_name}"
+        Owner = "${var.vpc_owner}"
+    }
+}
+{%- endfor %}
+{%- for availability_zone in availability_zones %}
+
+// https://www.terraform.io/docs/providers/aws/r/route.html
+resource "aws_route" "{{ public_network_tier }}_tier_{{ availability_zone }}_ipv4" {
+    route_table_id            = "${aws_route_table.{{ public_network_tier }}_tier_{{ availability_zone }}_nat_rt.id}"
+    destination_cidr_block    = "0.0.0.0/0"
+    nat_gateway_id = "${aws_nat_gateway.{{ public_network_tier }}_tier_{{ availability_zone }}.id}"
+}
+{%- endfor %}
+
+// Associate NAT Route Tables with Private Subnets
+{%- for availability_zone in availability_zones %}
+{%- for private_network_tier in private_network_tiers %}
+
+// https://www.terraform.io/docs/providers/aws/r/route_table_association.html
+resource "aws_route_table_association" "{{ private_network_tier }}_tier_{{ availability_zone }}" {
+    subnet_id = "${aws_subnet.{{ private_network_tier }}_tier_{{ availability_zone }}.id}"
+    route_table_id = "${aws_route_table.{{ public_network_tier }}_tier_{{ availability_zone }}_nat.id}"
+}
+{%- endfor %}
+{%- endfor %}

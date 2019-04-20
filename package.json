@@ -1,0 +1,20 @@
+{
+  "name": "node-generate-terraform-aws-vpc",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Samuel Loh Yin Kang",
+  "license": "MIT",
+  "description": "Generate AWS Terraform is a Node utility script to automatically generate Terraform scripts for AWS that create a VPC, subnets for defined network tiers and security group and network ACLs from defined traffic rules between the network tiers.",
+  "dependencies": {
+    "commander": "^2.20.0",
+    "glob": "^7.1.3",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.11",
+    "nunjucks": "^3.2.0",
+    "yaml": "^1.5.0"
+  }
+}
