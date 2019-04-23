@@ -1,0 +1,11 @@
+digraph {
+    concentrate = true
+
+    {%- for network_tier in network_tiers %}
+    {{ network_tier.name }}{{ "[shape = box]" if not network_tier.is_known_cidr_range}}
+    {%- endfor %}
+
+    {%- for network_traffic_rule in network_traffic_rules %}
+    {{ network_traffic_rule.source_tier.name }} -> {{ network_traffic_rule.destination_tier.name }}[label = "{{ network_traffic_rule.traffic_type.name }}"]
+    {%- endfor %}
+}

@@ -1,6 +1,6 @@
 {
   "name": "node-generate-terraform-aws-vpc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
