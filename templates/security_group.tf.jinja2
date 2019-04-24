@@ -36,7 +36,6 @@ resource "aws_security_group_rule" "{{ rule.name }}" {
 
 // https://www.terraform.io/docs/providers/aws/r/security_group_rule.html
 resource "aws_security_group_rule" "{{ rule.name }}" {
-
     security_group_id = "${aws_security_group.{{ name }}.id}"
     type = "{{ rule.type }}"
     from_port = {{ rule.port }}

@@ -1,0 +1,7 @@
+{%- for variable in variables %}
+
+variable "{{ variable.name }}" {
+    {% if variable.type %}type = "{{ variable.type }}"{% endif %}
+    {% if variable.default %}default = {{ variable.default }}{% endif %}
+}
+{%- endfor %}
