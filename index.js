@@ -34,5 +34,5 @@ function debug_log(obj) {
 let config = parse.parse(config_path);
 debug_log(config);
 
-render.render(config);
+render(config);
 
