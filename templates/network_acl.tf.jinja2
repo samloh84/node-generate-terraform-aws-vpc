@@ -7,12 +7,13 @@ resource "aws_network_acl" "{{ name }}" {
 
     subnet_ids = [
         {%- for availability_zone in availability_zones %}
-        "${aws_subnet.{{ network_tier_name }}_tier_{{ availability_zone }}.id}"{{ ',' if not loop.last }}
+        "${aws_subnet.{{ name }}_{{ availability_zone }}.id}"{{ ',' if not loop.last }}
         {%- endfor %}
     ]
 
     tags = {
-        Name = "${var.vpc_name}"
+        Name = "${var.vpc_name}.network_acl.{{ name }}"
+        Description = "${var.vpc_name} {{ network_tier_name }} tier Network ACL"
         Owner = "${var.vpc_owner}"
         Network_Tier = "{{ network_tier_name }}"
     }

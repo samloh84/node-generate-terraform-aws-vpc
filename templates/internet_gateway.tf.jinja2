@@ -4,7 +4,7 @@ resource "aws_internet_gateway" "internet_gateway" {
     vpc_id = "${aws_vpc.main.id}"
 
     tags = {
-        Name = "${var.vpc_name}_internet_gateway"
+        Name = "${var.vpc_name}.internet_gateway"
         VPC = "${var.vpc_name}"
         Owner = "${var.vpc_owner}"
     }
@@ -16,7 +16,7 @@ resource "aws_route_table" "public_route_table" {
     vpc_id = "${aws_vpc.main.id}"
 
     tags = {
-        Name = "${var.vpc_name}_public_route_table"
+        Name = "${var.vpc_name}.route_table.public"
         VPC = "${var.vpc_name}"
         Owner = "${var.vpc_owner}"
     }
@@ -43,7 +43,7 @@ resource "aws_route" "public_ipv6" {
 // https://www.terraform.io/docs/providers/aws/r/route_table_association.html
 resource "aws_route_table_association" "public_{{ public_network_tier }}_tier_{{ availability_zone }}" {
     subnet_id = "${aws_subnet.{{ public_network_tier }}_tier_{{ availability_zone }}.id}"
-    route_table_id = "${aws_route_table.public.id}"
+    route_table_id = "${aws_route_table.public_route_table.id}"
 }
 {% endfor %}
 {% endfor %}

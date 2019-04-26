@@ -3,11 +3,11 @@
 {%- for availability_zone in availability_zones %}
 
 // https://www.terraform.io/docs/providers/aws/r/eip.html
-resource "aws_eip" "{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gateway_eip" {
+resource "aws_eip" "{{ availability_zone }}_nat_gateway" {
     vpc = true
 
     tags = {
-        Name = "${var.vpc_name}_{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gateway_eip"
+        Name = "${var.vpc_name}.eip.{{ availability_zone }}_nat_gateway"
         VPC = "${var.vpc_name}"
         Owner = "${var.vpc_owner}"
     }
@@ -16,13 +16,13 @@ resource "aws_eip" "{{ public_network_tier }}_tier_{{ availability_zone }}_nat_g
 {%- for availability_zone in availability_zones %}
 
 // https://www.terraform.io/docs/providers/aws/r/nat_gateway.html
-resource "aws_nat_gateway" "{{ public_network_tier }}_tier_{{ availability_zone }}" {
-    allocation_id = "${aws_eip.{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gateway_eip.id}"
+resource "aws_nat_gateway" "private_{{ availability_zone }}" {
+    allocation_id = "${aws_eip.{{ availability_zone }}_nat_gateway.id}"
     subnet_id = "${aws_subnet.{{ public_network_tier }}_tier_{{ availability_zone }}.id}"
-    depends_on = ["aws_internet_gateway.igw"]
+    depends_on = ["aws_internet_gateway.internet_gateway"]
 
     tags = {
-        Name = "${var.vpc_name}_{{ public_network_tier }}_tier_{{ availability_zone }}_nat_gateway_eip"
+        Name = "${var.vpc_name}.nat_gateway.{{ availability_zone }}"
         VPC = "${var.vpc_name}"
         Owner = "${var.vpc_owner}"
     }
@@ -31,11 +31,11 @@ resource "aws_nat_gateway" "{{ public_network_tier }}_tier_{{ availability_zone 
 {%- for availability_zone in availability_zones %}
 
 // https://www.terraform.io/docs/providers/aws/r/route_table.html
-resource "aws_route_table" "{{ public_network_tier }}_tier_{{ availability_zone }}_nat_route_table" {
+resource "aws_route_table" "private_{{ availability_zone }}" {
     vpc_id = "${aws_vpc.main.id}"
 
     tags = {
-        Name = "${var.vpc_name}_{{ public_network_tier }}_tier_{{ availability_zone }}_nat_route_table"
+        Name = "${var.vpc_name}.route_table.private_{{ availability_zone }}"
         VPC = "${var.vpc_name}"
         Owner = "${var.vpc_owner}"
     }
@@ -44,10 +44,10 @@ resource "aws_route_table" "{{ public_network_tier }}_tier_{{ availability_zone 
 {%- for availability_zone in availability_zones %}
 
 // https://www.terraform.io/docs/providers/aws/r/route.html
-resource "aws_route" "{{ public_network_tier }}_tier_{{ availability_zone }}_ipv4" {
-    route_table_id            = "${aws_route_table.{{ public_network_tier }}_tier_{{ availability_zone }}_nat_route_table.id}"
+resource "aws_route" "private_{{ availability_zone }}_ipv4" {
+    route_table_id            = "${aws_route_table.private_{{ availability_zone }}.id}"
     destination_cidr_block    = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.{{ public_network_tier }}_tier_{{ availability_zone }}.id}"
+    nat_gateway_id = "${aws_nat_gateway.private_{{ availability_zone }}.id}"
 }
 {%- endfor %}
 

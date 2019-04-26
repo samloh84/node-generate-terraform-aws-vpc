@@ -3,10 +3,12 @@
 
 // https://www.terraform.io/docs/providers/aws/r/security_group.html
 resource "aws_security_group" "{{ name }}" {
+    name = "${var.vpc_name}.security_group.{{ name }}"
     vpc_id = "${aws_vpc.main.id}"
 
     tags = {
-        Name = "${var.vpc_name}"
+        Name = "${var.vpc_name}.security_group.{{ name }}"
+        Description = "${var.vpc_name} {{ network_tier_name }} tier Security Group"
         Owner = "${var.vpc_owner}"
         Network_Tier = "{{ network_tier_name }}"
     }
