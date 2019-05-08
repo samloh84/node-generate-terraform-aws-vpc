@@ -4,11 +4,14 @@ region: ap-southeast-1
 
 availability_zones:
   - ap-southeast-1a
+  - ap-southeast-1b
 
 network_tiers:
   - name: web
     public: true
   - application
+  - name: management
+    public: true
 
 network_traffic_rules:
   - source_tier: internet
@@ -19,6 +22,9 @@ network_traffic_rules:
     traffic_type: https
 
   - source_tier: remote_management
+    destination_tier: management
+    traffic_type: ssh
+  - source_tier: management
     destination_tier: all
     traffic_type: ssh
 

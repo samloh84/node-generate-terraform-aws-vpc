@@ -58,7 +58,7 @@ resource "aws_route" "private_{{ availability_zone }}_ipv4" {
 // https://www.terraform.io/docs/providers/aws/r/route_table_association.html
 resource "aws_route_table_association" "{{ private_network_tier }}_tier_{{ availability_zone }}" {
     subnet_id = "${aws_subnet.{{ private_network_tier }}_tier_{{ availability_zone }}.id}"
-    route_table_id = "${aws_route_table.{{ public_network_tier }}_tier_{{ availability_zone }}_nat.id}"
+    route_table_id = "${aws_route_table.private_{{ availability_zone }}.id}"
 }
 {%- endfor %}
 {%- endfor %}
