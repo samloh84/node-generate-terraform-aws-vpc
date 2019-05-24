@@ -18,8 +18,9 @@ resource "aws_network_acl" "{{ name }}" {
         Network_Tier = "{{ network_tier_name }}"
     }
 }
+
 {%- set rendered_network_acl_rules = [] %}
-{%- for rule in rules %}
+{%- for rule in ingress_rules %}
 
 locals {
     network_acl_{{ rule.name }} = "${flatten(list(
@@ -32,7 +33,33 @@ locals {
 // https://www.terraform.io/docs/providers/aws/r/network_acl_rule.html
 resource "aws_network_acl_rule" "{{ rule.name }}" {
     count = "${length(local.network_acl_{{ rule.name }})}"
-    egress = {{ rule.egress }}
+    egress = false
+    from_port = {{ rule.port }}
+    to_port = {{ rule.port }}
+    protocol = "{{ rule.protocol }}"
+    rule_number = "${100 {%- for rendered_network_acl_rule in rendered_network_acl_rules %} + (10 * length(local.network_acl_{{ rendered_network_acl_rule }})){%- endfor %} + (10 * count.index)}"
+    rule_action = "allow"
+    cidr_block = "${element(local.network_acl_{{ rule.name }}, count.index)}"
+    network_acl_id = "${aws_network_acl.{{ name }}.id}"
+}
+{% set rendered_network_acl_rules = rendered_network_acl_rules.concat([rule.name]) %}
+{%- endfor %}
+
+{%- set rendered_network_acl_rules = [] %}
+{%- for rule in egress_rules %}
+
+locals {
+    network_acl_{{ rule.name }} = "${flatten(list(
+        {%- for cidr_block in rule.cidr_blocks %}
+        list({{ cidr_block }}){{ ',' if not loop.last }}
+        {%- endfor %}
+    ))}"
+}
+
+// https://www.terraform.io/docs/providers/aws/r/network_acl_rule.html
+resource "aws_network_acl_rule" "{{ rule.name }}" {
+    count = "${length(local.network_acl_{{ rule.name }})}"
+    egress = true
     from_port = {{ rule.port }}
     to_port = {{ rule.port }}
     protocol = "{{ rule.protocol }}"

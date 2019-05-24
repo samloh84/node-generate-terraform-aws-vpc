@@ -5,7 +5,7 @@ const render = require('./lib/render');
 const commander = require('commander');
 const nodePath = require('path');
 const _ = require('lodash');
-const util =require('util');
+const util = require('util');
 
 
 let config_path = nodePath.resolve(process.cwd(), 'config.yaml');
@@ -26,7 +26,6 @@ function render_output(arg_config_path) {
 }
 
 
-
 function debug_log(obj) {
     console.error(JSON.stringify(obj, null, 4))
 }
@@ -34,5 +33,5 @@ function debug_log(obj) {
 let config = parse.parse(config_path);
 debug_log(config);
 
-render(config);
+render(config, nodePath.resolve(process.cwd(), 'output', nodePath.basename(config_path, '.yaml')));
 

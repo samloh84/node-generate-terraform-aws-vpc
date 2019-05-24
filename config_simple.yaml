@@ -12,6 +12,7 @@ network_tiers:
   - application
   - name: management
     public: true
+  - database
 
 network_traffic_rules:
   - source_tier: internet
@@ -20,6 +21,9 @@ network_traffic_rules:
   - source_tier: web
     destination_tier: application
     traffic_type: https
+  - source_tier: application
+    destination_tier: database
+    traffic_type: postgresql
 
   - source_tier: remote_management
     destination_tier: management
