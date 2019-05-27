@@ -5,33 +5,31 @@ region: ap-southeast-1
 availability_zones:
   - ap-southeast-1a
   - ap-southeast-1b
-  - ap-southeast-1c
 
 network_tiers:
   - name: web
     public: true
   - application
+  - name: management
+    public: true
   - database
-  - management
-  - infrastructure
 
 network_traffic_rules:
   - source_tier: internet
     destination_tier: web
     traffic_type: https
+  - source_tier: internet
+    destination_tier: web
+    traffic_type: http
   - source_tier: web
     destination_tier: application
     traffic_type: https
+  - source_tier: web
+    destination_tier: application
+    traffic_type: http
   - source_tier: application
     destination_tier: database
     traffic_type: postgresql
-
-  - source_tier: infrastructure
-    destination_tier: all
-    traffic_type: all
-  - source_tier: all
-    destination_tier: infrastructure
-    traffic_type: all
 
   - source_tier: remote_management
     destination_tier: management
