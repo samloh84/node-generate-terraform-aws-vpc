@@ -52,8 +52,8 @@ resource "aws_route" "private_{{ availability_zone }}_ipv4" {
 {%- endfor %}
 
 // Associate NAT Route Tables with Private Subnets
-{%- for availability_zone in availability_zones %}
 {%- for private_network_tier in private_network_tiers %}
+{%- for availability_zone in availability_zones %}
 
 // https://www.terraform.io/docs/providers/aws/r/route_table_association.html
 resource "aws_route_table_association" "{{ private_network_tier }}_tier_{{ availability_zone }}" {
