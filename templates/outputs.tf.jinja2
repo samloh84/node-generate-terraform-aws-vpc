@@ -2,7 +2,7 @@
 {%-  for vpc_attribute in vpc_attributes %}
 
 output "vpc_{{ vpc_attribute }}" {
-	value = "${aws_vpc.main.{{ vpc_attribute }}}"
+	value = aws_vpc.main.{{ vpc_attribute }}
 }
 {%- endfor %}
 
@@ -11,7 +11,7 @@ output "vpc_{{ vpc_attribute }}" {
 {% for security_group_attribute in security_group_attributes %}
 
 output "security_group_{{ network_tier_name }}_tier_{{ security_group_attribute }}" {
-	value = "${aws_security_group.{{ network_tier_name }}_tier.{{ security_group_attribute }}}"
+	value = aws_security_group.{{ network_tier_name }}_tier.{{ security_group_attribute }}
 }
 {%- endfor %}
 {%- endfor %}
@@ -20,14 +20,14 @@ output "security_group_{{ network_tier_name }}_tier_{{ security_group_attribute 
 {%- for network_tier_name, network_tier in network_tiers %}
 
 output "{{ network_tier_name }}_tier_cidr_block" {
-	value = "${local.{{ network_tier_name }}_tier_cidr_block}"
+	value = local.{{ network_tier_name }}_tier_cidr_block
 }
 
 {%- for availability_zone in availability_zones %}
 {%- for subnet_attribute in subnet_attributes %}
 
 output "subnet_{{ network_tier_name }}_tier_{{ availability_zone }}_{{ subnet_attribute }}" {
-	value = "${aws_subnet.{{ network_tier_name }}_tier_{{ availability_zone }}.{{ subnet_attribute }}}"
+	value = aws_subnet.{{ network_tier_name }}_tier_{{ availability_zone }}.{{ subnet_attribute }}
 }
 {%- endfor %}
 {%- endfor %}
@@ -35,7 +35,7 @@ output "subnet_{{ network_tier_name }}_tier_{{ availability_zone }}_{{ subnet_at
 output "subnet_{{ network_tier_name }}_tier_ids" {
     value = [
         {%- for availability_zone in availability_zones %}
-        "${aws_subnet.{{ network_tier_name }}_tier_{{ availability_zone }}.id}"{{ ',' if not loop.last }}
+        aws_subnet.{{ network_tier_name }}_tier_{{ availability_zone }}.id{{ ',' if not loop.last }}
         {%- endfor %}
     ]
 }

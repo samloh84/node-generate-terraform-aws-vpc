@@ -15,10 +15,10 @@ network_tiers:
   - database
 
 network_traffic_rules:
-  - source_tier: internet
+  - source_tier: remote_https
     destination_tier: web
     traffic_type: https
-  - source_tier: internet
+  - source_tier: remote_https
     destination_tier: web
     traffic_type: http
   - source_tier: web
@@ -56,3 +56,4 @@ known_traffic_types:
 known_cidr_ranges:
   internet: '"0.0.0.0/0"'
   remote_management: 'var.remote_management_cidrs'
+  remote_https: 'var.remote_https_cidrs'

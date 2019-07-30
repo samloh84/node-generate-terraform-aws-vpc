@@ -8,8 +8,8 @@ resource "aws_eip" "{{ availability_zone }}_nat_gateway" {
 
     tags = {
         Name = "${var.vpc_name}.eip.{{ availability_zone }}_nat_gateway"
-        VPC = "${var.vpc_name}"
-        Owner = "${var.vpc_owner}"
+        VPC = var.vpc_name
+        Owner = var.vpc_owner
     }
 }
 {%- endfor %}
@@ -17,14 +17,14 @@ resource "aws_eip" "{{ availability_zone }}_nat_gateway" {
 
 // https://www.terraform.io/docs/providers/aws/r/nat_gateway.html
 resource "aws_nat_gateway" "private_{{ availability_zone }}" {
-    allocation_id = "${aws_eip.{{ availability_zone }}_nat_gateway.id}"
-    subnet_id = "${aws_subnet.{{ public_network_tier }}_tier_{{ availability_zone }}.id}"
+    allocation_id = aws_eip.{{ availability_zone }}_nat_gateway.id
+    subnet_id = aws_subnet.{{ public_network_tier }}_tier_{{ availability_zone }}.id
     depends_on = ["aws_internet_gateway.internet_gateway"]
 
     tags = {
         Name = "${var.vpc_name}.nat_gateway.{{ availability_zone }}"
-        VPC = "${var.vpc_name}"
-        Owner = "${var.vpc_owner}"
+        VPC = var.vpc_name
+        Owner = var.vpc_owner
     }
 }
 {%- endfor %}
@@ -32,12 +32,12 @@ resource "aws_nat_gateway" "private_{{ availability_zone }}" {
 
 // https://www.terraform.io/docs/providers/aws/r/route_table.html
 resource "aws_route_table" "private_{{ availability_zone }}" {
-    vpc_id = "${aws_vpc.main.id}"
+    vpc_id = aws_vpc.main.id
 
     tags = {
         Name = "${var.vpc_name}.route_table.private_{{ availability_zone }}"
-        VPC = "${var.vpc_name}"
-        Owner = "${var.vpc_owner}"
+        VPC = var.vpc_name
+        Owner = var.vpc_owner
     }
 }
 {%- endfor %}
@@ -45,9 +45,9 @@ resource "aws_route_table" "private_{{ availability_zone }}" {
 
 // https://www.terraform.io/docs/providers/aws/r/route.html
 resource "aws_route" "private_{{ availability_zone }}_ipv4" {
-    route_table_id            = "${aws_route_table.private_{{ availability_zone }}.id}"
-    destination_cidr_block    = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.private_{{ availability_zone }}.id}"
+    route_table_id = aws_route_table.private_{{ availability_zone }}.id
+    destination_cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.private_{{ availability_zone }}.id
 }
 {%- endfor %}
 
@@ -57,8 +57,8 @@ resource "aws_route" "private_{{ availability_zone }}_ipv4" {
 
 // https://www.terraform.io/docs/providers/aws/r/route_table_association.html
 resource "aws_route_table_association" "{{ private_network_tier }}_tier_{{ availability_zone }}" {
-    subnet_id = "${aws_subnet.{{ private_network_tier }}_tier_{{ availability_zone }}.id}"
-    route_table_id = "${aws_route_table.private_{{ availability_zone }}.id}"
+    subnet_id = aws_subnet.{{ private_network_tier }}_tier_{{ availability_zone }}.id
+    route_table_id = aws_route_table.private_{{ availability_zone }}.id
 }
 {%- endfor %}
 {%- endfor %}
