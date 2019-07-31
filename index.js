@@ -7,6 +7,8 @@ const nodePath = require('path');
 const _ = require('lodash');
 const util = require('util');
 
+const execSync = require('child_process').execSync;
+
 
 let config_path = nodePath.resolve(process.cwd(), 'config.yaml');
 commander
@@ -33,5 +35,8 @@ function debug_log(obj) {
 let config = parse.parse(config_path);
 debug_log(config);
 
-render(config, nodePath.resolve(process.cwd(), 'output', nodePath.basename(config_path, '.yaml')));
+let outputPath = nodePath.resolve(process.cwd(), 'output', nodePath.basename(config_path, '.yaml'));
+render(config, outputPath);
+
+execSync('terraform fmt', {cwd:outputPath});
 

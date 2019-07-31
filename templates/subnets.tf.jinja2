@@ -2,21 +2,21 @@
 {%- set network_tier_loop_index = loop.index0 %}
 
 locals {
-    {{ network_tier_name }}_tier_cidr_block = "${cidrsubnet(aws_vpc.main.cidr_block, 6, {{ network_tier_loop_index }})}"
+    {{ network_tier_name }}_tier_cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 6, {{ network_tier_loop_index }})
 }
 {%- for availability_zone in availability_zones %}
 {%- set availability_zone_loop_index = loop.index0 %}
 
 // https://www.terraform.io/docs/providers/aws/r/subnet.html
 resource "aws_subnet" "{{ network_tier_name }}_tier_{{ availability_zone }}" {
-    vpc_id = "${aws_vpc.main.id}"
-    cidr_block = "${cidrsubnet(local.{{ network_tier_name }}_tier_cidr_block, 2, {{ availability_zone_loop_index }})}"
+    vpc_id = aws_vpc.main.id
+    cidr_block = cidrsubnet(local.{{ network_tier_name }}_tier_cidr_block, 2, {{ availability_zone_loop_index }})
     availability_zone = "{{ availability_zone }}"
     map_public_ip_on_launch = {{ "true" if network_tier.public else "false" }}
 
     tags = {
         Name = "${var.vpc_name}.subnet.{{ network_tier_name }}_tier_{{ availability_zone }}"
-        Owner = "${var.vpc_owner}"
+        Owner = var.vpc_owner
         Network_Tier = "{{ network_tier_name }}"
     }
 }
