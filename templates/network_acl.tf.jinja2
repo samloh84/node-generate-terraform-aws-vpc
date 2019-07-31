@@ -37,7 +37,7 @@ resource "aws_network_acl_rule" "{{ rule.name }}" {
     from_port = {{ rule.from_port if rule.from_port else rule.port }}
     to_port = {{ rule.to_port if rule.to_port else rule.port }}
     protocol = "{{ rule.protocol }}"
-    rule_number = 100{% for rendered_network_acl_rule in rendered_network_acl_rules %} + (10 * length(local.network_acl_{{ rendered_network_acl_rule }})){% endfor %} + (10 * count.index)
+    rule_number = 100 {%- for rendered_network_acl_rule in rendered_network_acl_rules %} + (10 * length(local.network_acl_{{ rendered_network_acl_rule }})){%- endfor %} + (10 * count.index)
     rule_action = "allow"
     cidr_block = local.network_acl_{{ rule.name }}[count.index]
     network_acl_id = aws_network_acl.{{ name }}.id
@@ -63,7 +63,7 @@ resource "aws_network_acl_rule" "{{ rule.name }}" {
     from_port = {{ rule.from_port if rule.from_port else rule.port }}
     to_port = {{ rule.to_port if rule.to_port else rule.port }}
     protocol = "{{ rule.protocol }}"
-    rule_number = 100{% for rendered_network_acl_rule in rendered_network_acl_rules %} + (10 * length(local.network_acl_{{ rendered_network_acl_rule }})){% endfor %} + (10 * count.index)
+    rule_number = 100 {%- for rendered_network_acl_rule in rendered_network_acl_rules %} + (10 * length(local.network_acl_{{ rendered_network_acl_rule }})){%- endfor %} + (10 * count.index)
     rule_action = "allow"
     cidr_block = local.network_acl_{{ rule.name }}[count.index]
     network_acl_id = aws_network_acl.{{ name }}.id

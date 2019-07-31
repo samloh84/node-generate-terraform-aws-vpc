@@ -17,11 +17,11 @@ resource "aws_security_group" "{{ name }}" {
 {%- if rule.cidr_blocks | length %}
 
 locals {
-    security_group_{{ rule.name }} = "${flatten([
+    security_group_{{ rule.name }} = flatten(list(
         {%- for cidr_block in rule.cidr_blocks %}
         {{ cidr_block }}{{ ',' if not loop.last }}
         {%- endfor %}
-    ])}"
+    ))
 }
 
 // https://www.terraform.io/docs/providers/aws/r/security_group_rule.html

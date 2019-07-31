@@ -24,15 +24,15 @@ resource "aws_route_table" "public_route_table" {
 
 // https://www.terraform.io/docs/providers/aws/r/route.html
 resource "aws_route" "public_ipv4" {
-    route_table_id            = aws_route_table.public_route_table.id
-    destination_cidr_block    = "0.0.0.0/0"
+    route_table_id = aws_route_table.public_route_table.id
+    destination_cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.internet_gateway.id
 }
 
 // https://www.terraform.io/docs/providers/aws/r/route.html
 resource "aws_route" "public_ipv6" {
-    route_table_id            = aws_route_table.public_route_table.id
-    destination_ipv6_cidr_block    = "::/0"
+    route_table_id = aws_route_table.public_route_table.id
+    destination_ipv6_cidr_block = "::/0"
     gateway_id = aws_internet_gateway.internet_gateway.id
 }
 

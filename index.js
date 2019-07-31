@@ -9,7 +9,6 @@ const util = require('util');
 
 const execSync = require('child_process').execSync;
 
-
 let config_path = nodePath.resolve(process.cwd(), 'config.yaml');
 commander
     .version('0.1.1')
@@ -39,4 +38,3 @@ let outputPath = nodePath.resolve(process.cwd(), 'output', nodePath.basename(con
 render(config, outputPath);
 
 execSync('terraform fmt', {cwd:outputPath});
-
