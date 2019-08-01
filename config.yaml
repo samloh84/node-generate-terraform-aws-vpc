@@ -10,8 +10,7 @@ network_tiers:
   - name: web
     public: true
   - application
-  - name: management
-    public: true
+  - management
   - database
 
 network_traffic_rules:
