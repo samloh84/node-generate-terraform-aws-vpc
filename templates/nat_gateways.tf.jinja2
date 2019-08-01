@@ -18,7 +18,7 @@ resource "aws_eip" "{{ availability_zone }}_nat_gateway" {
 // https://www.terraform.io/docs/providers/aws/r/nat_gateway.html
 resource "aws_nat_gateway" "private_{{ availability_zone }}" {
     allocation_id = aws_eip.{{ availability_zone }}_nat_gateway.id
-    subnet_id = aws_subnet.{{ public_network_tier }}_tier_{{ availability_zone }}.id
+    subnet_id = aws_subnet.{{ nat_gateway_network_tier }}_tier_{{ availability_zone }}.id
     depends_on = ["aws_internet_gateway.internet_gateway"]
 
     tags = {
